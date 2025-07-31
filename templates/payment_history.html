@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}To'lov tarixi - {{ client.name }}{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="text-lg font-medium text-gray-900 dark:text-white">To'lov tarixi - {{ client.name }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <strong>Joriy balans:</strong> {{ "{:,.2f}".format(client.balance) }} so'm
+            </div>
+            
+            {% if transactions %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Sana</th>
+                            <th>Turi</th>
+                            <th>Miqdor</th>
+                            <th>Izoh</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td class="text-gray-500 dark:text-gray-400">{{ transaction.date.strftime('%d.%m.%Y') }}</td>
+                            <td>
+                                {% if transaction.transaction_type == 'debit' %}
+                                    <span class="badge badge-danger">Qarz</span>
+                                {% else %}
+                                    <span class="badge badge-success">To'lov</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="{{ 'amount-negative' if transaction.transaction_type == 'debit' else 'amount-positive' }}">
+                                    {{ "{:,.2f}".format(transaction.amount) }} so'm
+                                </span>
+                            </td>
+                            <td class="text-gray-500 dark:text-gray-400">{{ transaction.comment or '-' }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('edit_transaction', transaction_id=transaction.id) }}" 
+                                       class="btn-edit" title="Tahrirlash">
+                                        ✏️
+                                    </a>
+                                    <button onclick="confirmDeleteTransaction({{ transaction.id }})" 
+                                            class="btn-delete" title="O'chirish">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                Bu mijoz uchun tranzaksiyalar mavjud emas.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Moliyalar{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Filtrlar -->
+    <div class="card">
+        <div class="card-body">
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="form-label">Mijoz</label>
+                    <input type="text" name="client" value="{{ request.args.get('client', '') }}" 
+                           class="form-control">
+                </div>
+                <div>
+                    <label class="form-label">Telefon</label>
+                    <input type="text" name="phone" value="{{ request.args.get('phone', '') }}" 
+                           class="form-control">
+                </div>
+                <div>
+                    <label class="form-label">Turi</label>
+                    <select name="type" class="form-control">
+                        <option value="">Hammasi</option>
+                        <option value="debit" {{ 'selected' if request.args.get('type') == 'debit' }}>Qarz</option>
+                        <option value="credit" {{ 'selected' if request.args.get('type') == 'credit' }}>To'lov</option>
+                    </select>
+                </div>
+                <div class="md:col-span-3 flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        🔍 Filtr
+                    </button>
+                    <a href="{{ url_for('finance') }}" class="btn btn-secondary">
+                        ✖️ Tozalash
+                    </a>
+                    <button type="button" class="btn btn-success">
+                        📊 Ochish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tranzaksiyalar ro'yxati -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-white">Tranzaksiyalar ro'yxati</h2>
+        </div>
+        
+        {% if transactions %}
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Yaratilgan sana</th>
+                            <th>Kiritilgan sana</th>
+                            <th>Mijoz</th>
+                            <th>Turi</th>
+                            <th>Summa</th>
+                            <th>Izoh</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td class="text-gray-500 dark:text-gray-400">
+                                {{ transaction.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </td>
+                            <td class="text-gray-500 dark:text-gray-400">
+                                {{ transaction.date.strftime('%Y-%m-%d') }}
+                            </td>
+                            <td class="font-medium text-gray-900 dark:text-white">
+                                {{ transaction.client.name }}
+                            </td>
+                            <td>
+                                <span class="badge {{ 'badge-danger' if transaction.transaction_type == 'debit' else 'badge-success' }}">
+                                    {{ 'Qarz' if transaction.transaction_type == 'debit' else 'To\'lov' }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="{{ 'amount-negative' if transaction.transaction_type == 'debit' else 'amount-positive' }}">
+                                    {{ "%.2f"|format(transaction.amount) }}
+                                </span>
+                            </td>
+                            <td class="text-gray-500 dark:text-gray-400">{{ transaction.comment or '-' }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('edit_transaction', transaction_id=transaction.id) }}" 
+                                       class="btn-edit" title="Tahrirlash">
+                                        ✏️
+                                    </a>
+                                    <button onclick="confirmDeleteTransaction({{ transaction.id }})" 
+                                            class="btn-delete" title="O'chirish">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="card-body">
+            <div class="text-center py-12">
+                <div class="w-12 h-12 mx-auto bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <span class="text-gray-400 dark:text-gray-500 text-xl">📊</span>
+                </div>
+                <p class="text-gray-500 dark:text-gray-400">Ma'lumot yo'q</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Bosh sahifa{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Bosh sahifa</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Kirimlar soni -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xl">📊</span>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Kirimlar soni</dt>
+                            <dd class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.income_count }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kirimlar summasi -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xl">💰</span>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Kirimlar summasi</dt>
+                            <dd class="text-2xl font-bold text-green-600 dark:text-green-400">{{ "{:,.2f}".format(stats.income_sum) }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Qarzdorlar soni -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xl">👥</span>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Qarzdorlar soni</dt>
+                            <dd class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.debtors_count }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Qarzdorlik summasi -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xl">📋</span>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Qarzdorlik summasi</dt>
+                            <dd class="text-2xl font-bold text-red-600 dark:text-red-400">{{ "{:,.2f}".format(stats.debtors_sum) }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kreditorlar soni -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xl">👤</span>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Kreditorlar soni</dt>
+                            <dd class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.creditors_count }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kreditorlik summasi -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center shadow-lg">
+                            <span class="text-white text-xl">📄</span>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Kreditorlik summasi</dt>
+                            <dd class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ "{:,.2f}".format(stats.creditors_sum) }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tezkor amallar -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Tezkor amallar -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Tezkor amallar</h3>
+            </div>
+            <div class="card-body">
+                <div class="space-y-3">
+                    <a href="{{ url_for('clients') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-blue-600 dark:text-blue-400 text-lg">👥</span>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900 dark:text-white">Mijozlar</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Mijozlarni boshqarish</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ url_for('debt') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <div class="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-red-600 dark:text-red-400 text-lg">💰</span>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900 dark:text-white">Qarz qo'shish</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Yangi qarz qo'shish</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ url_for('finance') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-green-600 dark:text-green-400 text-lg">📈</span>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900 dark:text-white">Moliyalar</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Tranzaksiyalar tarixi</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ url_for('reports') }}" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-purple-600 dark:text-purple-400 text-lg">📊</span>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900 dark:text-white">Hisobotlar</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Excel hisobotlarni yuklab olish</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- So'nggi faollik -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">So'nggi faollik</h3>
+            </div>
+            <div class="card-body">
+                <div class="space-y-3">
+                    <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-blue-600 dark:text-blue-400 text-sm">📊</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white">Bugun {{ stats.income_count }} ta kirim</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ "{:,.2f}".format(stats.income_sum) }} so'm</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                        <div class="w-8 h-8 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-red-600 dark:text-red-400 text-sm">👥</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ stats.debtors_count }} ta qarzdor</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ "{:,.2f}".format(stats.debtors_sum) }} so'm</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                        <div class="w-8 h-8 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-yellow-600 dark:text-yellow-400 text-sm">👤</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ stats.creditors_count }} ta kreditor</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ "{:,.2f}".format(stats.creditors_sum) }} so'm</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

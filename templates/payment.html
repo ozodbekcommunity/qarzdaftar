@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}To'lov{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="text-lg font-medium text-gray-900 dark:text-white">To'lov qilish - {{ client.name }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <strong>Joriy qarz:</strong> {{ "{:,.2f}".format(client.balance) }} so'm
+            </div>
+            
+            <form method="POST" id="paymentForm">
+                <div class="mb-4">
+                    <label class="form-label">To'lov turi</label>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <input class="form-check-input" type="radio" name="payment_type" id="full" value="full" checked>
+                            <label class="form-check-label ml-2" for="full">
+                                To'liq to'lov ({{ "{:,.2f}".format(client.balance) }} so'm)
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input class="form-check-input" type="radio" name="payment_type" id="partial" value="partial">
+                            <label class="form-check-label ml-2" for="partial">
+                                Qisman to'lov
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4" id="amount_field" style="display: none;">
+                    <label for="amount" class="form-label">To'lov miqdori <span class="text-red-500">*</span></label>
+                    <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0.01" max="{{ client.balance }}" placeholder="Miqdorni kiriting...">
+                    <small class="text-gray-500">Maksimal miqdor: {{ "{:,.2f}".format(client.balance) }} so'm</small>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="date" class="form-label">To'lov sanasi</label>
+                    <input type="date" class="form-control" id="date" name="date" value="{{ date.today().strftime('%Y-%m-%d') }}" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="comment" class="form-label">Izoh</label>
+                    <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="To'lov haqida qo'shimcha ma'lumot..."></textarea>
+                </div>
+                
+                <div class="flex justify-between">
+                    <a href="{{ url_for('clients') }}" class="btn btn-secondary">
+                        ← Orqaga
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        💰 To'lov qilish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fullRadio = document.getElementById('full');
+    const partialRadio = document.getElementById('partial');
+    const amountField = document.getElementById('amount_field');
+    const amountInput = document.getElementById('amount');
+    const paymentForm = document.getElementById('paymentForm');
+    
+    function toggleAmountField() {
+        if (partialRadio.checked) {
+            amountField.style.display = 'block';
+            amountInput.required = true;
+            amountInput.focus();
+        } else {
+            amountField.style.display = 'none';
+            amountInput.required = false;
+            amountInput.value = '';
+        }
+    }
+    
+    function validatePaymentForm() {
+        const paymentType = document.querySelector('input[name="payment_type"]:checked');
+        const dateInput = document.getElementById('date');
+        
+        if (!paymentType) {
+            alert('Iltimos, to\'lov turini tanlang');
+            return false;
+        }
+        
+        if (!dateInput.value) {
+            alert('Iltimos, to\'lov sanasini kiriting');
+            dateInput.focus();
+            return false;
+        }
+        
+        if (paymentType.value === 'partial') {
+            if (!amountInput.value || parseFloat(amountInput.value) <= 0) {
+                alert('Iltimos, to\'lov miqdorini kiriting');
+                amountInput.focus();
+                return false;
+            }
+            
+            const amount = parseFloat(amountInput.value);
+            const maxAmount = parseFloat('{{ client.balance }}');
+            
+            if (amount > maxAmount) {
+                alert('To\'lov miqdori qarz miqdoridan katta bo\'lishi mumkin emas');
+                amountInput.focus();
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    fullRadio.addEventListener('change', toggleAmountField);
+    partialRadio.addEventListener('change', toggleAmountField);
+    
+    // Form submission
+    paymentForm.addEventListener('submit', function(e) {
+        console.log('Payment form submit triggered');
+        
+        if (!validatePaymentForm()) {
+            e.preventDefault();
+            return false;
+        }
+        
+        // Show loading state
+        const submitBtn = paymentForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="inline-flex items-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Jarayon...</div>';
+        }
+        
+        console.log('Form is valid, submitting...');
+    });
+    
+    // Amount input validation
+    amountInput.addEventListener('input', function() {
+        const value = parseFloat(this.value);
+        const maxAmount = parseFloat('{{ client.balance }}');
+        
+        if (value > maxAmount) {
+            this.setCustomValidity('To\'lov miqdori qarz miqdoridan katta bo\'lishi mumkin emas');
+        } else if (value <= 0) {
+            this.setCustomValidity('To\'lov miqdori 0 dan katta bo\'lishi kerak');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
+    // Initial state
+    toggleAmountField();
+});
+</script>
+{% endblock %} 

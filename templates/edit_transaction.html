@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Tranzaksiyani tahrirlash{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="text-lg font-medium text-gray-900 dark:text-white">Tranzaksiyani tahrirlash</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <strong>Mijoz:</strong> {{ transaction.client.name }}
+            </div>
+            
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="transaction_type" class="form-label">Tranzaksiya turi</label>
+                    <select class="form-control" id="transaction_type" name="transaction_type" required>
+                        <option value="debit" {% if transaction.transaction_type == 'debit' %}selected{% endif %}>Qarz</option>
+                        <option value="credit" {% if transaction.transaction_type == 'credit' %}selected{% endif %}>To'lov</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Miqdor</label>
+                    <input type="number" class="form-control" id="amount" name="amount" 
+                           value="{{ transaction.amount }}" step="0.01" min="0.01" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="date" class="form-label">Sana</label>
+                    <input type="date" class="form-control" id="date" name="date" 
+                           value="{{ transaction.date.strftime('%Y-%m-%d') }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="comment" class="form-label">Izoh</label>
+                    <textarea class="form-control" id="comment" name="comment" rows="3">{{ transaction.comment or '' }}</textarea>
+                </div>
+                
+                <div class="flex justify-between">
+                    <a href="{{ url_for('finance') }}" class="btn btn-secondary">Bekor qilish</a>
+                    <button type="submit" class="btn btn-primary">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

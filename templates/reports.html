@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Hisobotlar{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Hisobotlar</h1>
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+            Excel formatida hisobotlarni yuklab oling
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Umumiy hisobot -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center shadow-lg">
+                        <span class="text-white text-xl">📊</span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Umumiy hisobot</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Barcha ma'lumotlar</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Mijozlar, tranzaksiyalar va statistika ma'lumotlarini o'z ichiga olgan to'liq hisobot
+                </p>
+                <a href="{{ url_for('download_report', report_type='all') }}" 
+                   class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center">
+                    <span class="mr-2">📥</span>
+                    Yuklab olish
+                </a>
+            </div>
+        </div>
+
+        <!-- Mijozlar hisoboti -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center shadow-lg">
+                        <span class="text-white text-xl">👥</span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Mijozlar hisoboti</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Mijozlar ro'yxati</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Barcha mijozlar haqida ma'lumotlar: nomi, telefon, balans, va'da sanasi
+                </p>
+                <a href="{{ url_for('download_report', report_type='clients') }}" 
+                   class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center">
+                    <span class="mr-2">📥</span>
+                    Yuklab olish
+                </a>
+            </div>
+        </div>
+
+        <!-- Tranzaksiyalar hisoboti -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center shadow-lg">
+                        <span class="text-white text-xl">💰</span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Tranzaksiyalar hisoboti</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">To'lovlar va qarzlar</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Barcha tranzaksiyalar tarixi: to'lovlar, qarzlar va ularning sanalari
+                </p>
+                <a href="{{ url_for('download_report', report_type='transactions') }}" 
+                   class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center">
+                    <span class="mr-2">📥</span>
+                    Yuklab olish
+                </a>
+            </div>
+        </div>
+
+        <!-- Statistika hisoboti -->
+        <div class="card hover:shadow-lg transition-shadow">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center shadow-lg">
+                        <span class="text-white text-xl">📈</span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Statistika hisoboti</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Umumiy statistika</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Qarzdorlar, kreditorlar va bugungi kirimlar haqida statistika
+                </p>
+                <a href="{{ url_for('download_report', report_type='summary') }}" 
+                   class="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center">
+                    <span class="mr-2">📥</span>
+                    Yuklab olish
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ma'lumot -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Hisobotlar haqida ma'lumot</h3>
+        </div>
+        <div class="card-body">
+            <div class="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                <div class="flex items-start">
+                    <span class="text-blue-500 mr-2">•</span>
+                    <span>Hisobotlar Excel (.xlsx) formatida yuklanadi</span>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-blue-500 mr-2">•</span>
+                    <span>Fayl nomida hisobot turi va yaratilgan sana ko'rsatiladi</span>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-blue-500 mr-2">•</span>
+                    <span>Umumiy hisobotda barcha ma'lumotlar alohida varaqlarda joylashgan</span>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-blue-500 mr-2">•</span>
+                    <span>Hisobotlar real vaqtda yaratiladi va eng so'nggi ma'lumotlarni o'z ichiga oladi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

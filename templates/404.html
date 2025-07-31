@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Sahifa topilmadi{% endblock %}
+
+{% block content %}
+<div class="min-h-[60vh] flex items-center justify-center">
+    <div class="text-center max-w-md mx-auto">
+        <!-- 404 Icon -->
+        <div class="mb-8">
+            <div class="w-24 h-24 mx-auto bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+                <svg class="w-12 h-12 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Error Number -->
+        <h1 class="text-8xl font-bold text-gray-300 dark:text-gray-600 mb-4">
+            404
+        </h1>
+        
+        <!-- Title -->
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Sahifa topilmadi
+        </h2>
+        
+        <!-- Description -->
+        <p class="text-gray-600 dark:text-gray-300 mb-8">
+            Kechirasiz, siz qidirayotgan sahifa mavjud emas yoki o'chirilgan bo'lishi mumkin.
+        </p>
+        
+        <!-- Error Details -->
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-8">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                URL: <span class="font-mono text-gray-700 dark:text-gray-300">{{ request.url }}</span>
+            </p>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ url_for('dashboard') }}" class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                Bosh sahifaga qaytish
+            </a>
+            
+            <button onclick="history.back()" class="inline-flex items-center justify-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Orqaga qaytish
+            </button>
+        </div>
+        
+        <!-- Helpful Links -->
+        <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-4">
+                Foydali sahifalar:
+            </h3>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="{{ url_for('clients') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    👥 Mijozlar
+                </a>
+                <a href="{{ url_for('debt') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    💰 Qarz
+                </a>
+                <a href="{{ url_for('finance') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    📈 Moliyalar
+                </a>
+                <a href="{{ url_for('settings') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    ⚙️ Sozlamalar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

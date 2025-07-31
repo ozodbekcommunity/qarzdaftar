@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Mijozni tahrirlash{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Mijozni tahrirlash</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Ism</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ client.name }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Telefon</label>
+                            <input type="text" class="form-control" id="phone" name="phone" value="{{ client.phone }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Izoh</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="3">{{ client.comment or '' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Rasm</label>
+                            <div class="d-flex align-items-center gap-3">
+                                {% if client.get_photo_url() %}
+                                <div class="position-relative">
+                                    <img src="{{ client.get_photo_url() }}" alt="{{ client.name }}" 
+                                         class="w-20 h-20 rounded-md object-cover">
+                                </div>
+                                {% endif %}
+                                <div class="w-20 h-20 border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors" onclick="document.getElementById('photo-input').click()">
+                                    <span class="text-gray-400 text-sm">+ Yuklash</span>
+                                    <input type="file" id="photo-input" name="photo" class="hidden" accept="image/*" onchange="previewImage(this)">
+                                </div>
+                            </div>
+                            <div id="photo-preview" class="mt-2 hidden">
+                                <img id="preview-img" class="w-20 h-20 rounded-md object-cover">
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('clients') }}" class="btn btn-secondary">Bekor qilish</a>
+                            <button type="submit" class="btn btn-primary">Saqlash</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('photo-preview');
+    const previewImg = document.getElementById('preview-img');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.classList.remove('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Mijozlar{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Filtrlar -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Filtrlar</h3>
+        </div>
+        <div class="card-body">
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="form-label">Nomi</label>
+                    <input type="text" name="name" value="{{ request.args.get('name', '') }}" 
+                           class="form-control" placeholder="Mijoz nomi...">
+                </div>
+                <div>
+                    <label class="form-label">Telefon</label>
+                    <input type="text" name="phone" value="{{ request.args.get('phone', '') }}" 
+                           class="form-control" placeholder="Telefon raqami...">
+                </div>
+                <div>
+                    <label class="form-label">Vada qilingan to'lov sanasi</label>
+                    <input type="date" name="date" value="{{ request.args.get('date', '') }}" 
+                           class="form-control">
+                </div>
+                <div>
+                    <label class="form-label">Qarzdor</label>
+                    <select name="debtor" class="form-control">
+                        <option value="">Hammasi</option>
+                        <option value="debtor" {{ 'selected' if request.args.get('debtor') == 'debtor' }}>Qarzdorlar</option>
+                        <option value="creditor" {{ 'selected' if request.args.get('debtor') == 'creditor' }}>Kreditorlar</option>
+                    </select>
+                </div>
+                <div class="md:col-span-4 flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        🔍 Filtr
+                    </button>
+                    <a href="{{ url_for('clients') }}" class="btn btn-secondary">
+                        ✖️ Tozalash
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mijozlar ro'yxati -->
+    <div class="card">
+        <div class="card-header flex justify-between items-center">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-white">Mijozlar ro'yxati</h2>
+            <button onclick="openModal('clientModal')" class="btn btn-primary">
+                ➕ Yaratish
+            </button>
+        </div>
+        <div class="card-body">
+            {% if clients %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Rasm</th>
+                            <th>Mijoz</th>
+                            <th>Vada sanasi</th>
+                            <th>Balans</th>
+                            <th>Telefon</th>
+                            <th>Holat</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in clients %}
+                        <tr class="fade-in">
+                            <td>
+                                {% if client.get_photo_url() %}
+                                <img src="{{ client.get_photo_url() }}" alt="{{ client.name }}" 
+                                     class="w-10 h-10 rounded-full object-cover">
+                                {% else %}
+                                <div class="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                                    <span class="text-gray-500 dark:text-gray-400 text-xs">👤</span>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td class="font-medium text-gray-900 dark:text-white">{{ client.name }}</td>
+                            <td class="text-gray-500 dark:text-gray-400">
+                                {{ client.promised_payment_date.strftime('%Y-%m-%d') if client.promised_payment_date else '-' }}
+                            </td>
+                            <td>
+                                <span class="{{ 'amount-negative' if client.balance > 0 else 'amount-positive' if client.balance < 0 else 'amount-neutral' }}">
+                                    {{ "{:,.2f}".format(client.balance) }}
+                                </span>
+                            </td>
+                            <td class="text-gray-500 dark:text-gray-400">{{ client.phone }}</td>
+                            <td>
+                                <span class="badge {{ 'badge-danger' if client.balance > 0 else 'badge-success' if client.balance < 0 else 'badge-info' }}">
+                                    {{ 'Qarzdor' if client.balance > 0 else 'Kreditor' if client.balance < 0 else 'Neytral' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('edit_client', client_id=client.id) }}" 
+                                       class="btn-edit" title="Tahrirlash">
+                                        ✏️
+                                    </a>
+                                    {% if client.balance > 0 %}
+                                    <a href="{{ url_for('payment', client_id=client.id) }}" 
+                                       class="btn-payment" title="To'lov">
+                                        💰
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ url_for('payment_history', client_id=client.id) }}" 
+                                       class="btn-view" title="Tarix">
+                                        📊
+                                    </a>
+                                    <button onclick="confirmDeleteClient('{{ client.id }}')" 
+                                            class="btn-delete" title="O'chirish">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <div class="w-12 h-12 mx-auto bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <span class="text-gray-400 dark:text-gray-500 text-xl">📂</span>
+                </div>
+                <p class="text-gray-500 dark:text-gray-400">Ma'lumot yo'q</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Mijoz yaratish uchun modal -->
+<div id="clientModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Yangi mijoz</h3>
+            <button onclick="closeModal('clientModal')" class="modal-close">×</button>
+        </div>
+        <form method="POST" action="{{ url_for('create_client') }}" class="modal-body" enctype="multipart/form-data" id="clientForm">
+            <div class="space-y-4">
+                <div>
+                    <label class="form-label">* Mijoz</label>
+                    <input type="text" name="name" required 
+                           class="form-control" placeholder="Mijoz nomi">
+                </div>
+                <div>
+                    <label class="form-label">* Telefon</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-sm rounded-l-md">+</span>
+                        <input type="text" name="phone" required 
+                               class="flex-1 form-control rounded-l-none" placeholder="998 (99) 999-99-99">
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label">Izoh</label>
+                    <textarea name="comment" rows="3" class="form-control" placeholder="Qo'shimcha ma'lumotlar..."></textarea>
+                </div>
+                <div>
+                    <label class="form-label">Rasm</label>
+                    <div class="w-20 h-20 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md flex items-center justify-center cursor-pointer hover:border-gray-400 dark:hover:border-gray-500 transition-colors relative" onclick="document.getElementById('photo-input').click()">
+                        <span class="text-gray-400 dark:text-gray-500 text-sm">+ Yuklash</span>
+                        <input type="file" id="photo-input" name="photo" class="hidden" accept="image/*" onchange="previewImage(this)">
+                    </div>
+                    <div id="photo-preview" class="mt-2 hidden">
+                        <img id="preview-img" class="w-20 h-20 rounded-md object-cover">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" id="saveClientBtn">
+                    Saqlash
+                </button>
+                <button type="button" onclick="closeModal('clientModal')" class="btn btn-secondary">
+                    Bekor qilish
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Mijoz ma'lumotlari modal -->
+<div id="clientInfoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Mijoz ma'lumotlari</h3>
+            <button onclick="closeModal('clientInfoModal')" class="modal-close">×</button>
+        </div>
+        <div class="modal-body">
+            <div id="clientInfoContent">
+                <!-- Ma'lumotlar JavaScript orqali yuklanadi -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="closeModal('clientInfoModal')" class="btn btn-secondary">
+                Yopish
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('photo-preview');
+    const previewImg = document.getElementById('preview-img');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.classList.remove('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Simple form submission test
+document.addEventListener('DOMContentLoaded', function() {
+    const clientForm = document.getElementById('clientForm');
+    if (clientForm) {
+        clientForm.addEventListener('submit', function(e) {
+            console.log('Form submission test - form data:', new FormData(this));
+        });
+    }
+});
+</script>
+{% endblock %}
